@@ -31,6 +31,7 @@ class RedisBackend(_RedisBackend):
             else:
                 message = next(p.listen())
             p.unsubscribe()
+            p.close()
             assert message['type'] == 'message'
             assert message['channel'] == key
             meta = message['data']

@@ -12,5 +12,9 @@ def add(x, y):
 
 if __name__ == "__main__":
     r = add.delay(5, 4)
-    result = r.get()
-    print(result)
+    print(r.get())
+    print(r.get())
+
+    r = add.delay(5, 5)
+    print(r.get())
+    print(r.get())
