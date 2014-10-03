@@ -17,7 +17,7 @@ CELERY_RESULT_BACKEND=celery_redis.RedisBackend+redis://localhost:6379/0
 Known issues
 ============
 
-- There is a very window between checking if the result has already been 
+- There is a very small window between checking if the result has already been 
   published to the key, and subscribing the pubsub listener during which the
   result could be published (and hence missed)
 
