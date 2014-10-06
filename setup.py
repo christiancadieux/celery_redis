@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='celery-redis',
     description='''A redis result backend for celery that uses pubsub to wait for results''',
-    version='0.1.1',
+    version='0.2.0',
     author='Simon Hewitt',
     author_email='si@sjhewitt.co.uk',
     url='http://github.com/sjhewitt/celery_redis',
