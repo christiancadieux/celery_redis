@@ -10,7 +10,7 @@ setup(
     url='http://github.com/sjhewitt/celery_redis',
     packages=['celery_redis'],
     install_requires=[
-        'celery>=3.1.0',
+        'celery>=3.1.15',
         'redis>=2.10.0',
     ],
 )

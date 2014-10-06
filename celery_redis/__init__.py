@@ -2,19 +2,23 @@ from __future__ import absolute_import
 
 import time
 
+from celery import states
 from celery.backends.redis import RedisBackend as _RedisBackend
 from celery.exceptions import TimeoutError
 
 
 class RedisBackend(_RedisBackend):
     def wait_for(self, task_id,
-                 timeout=None, propagate=True, interval=0.5, no_ack=True,
-                 on_interval=None):
+                 timeout=None, interval=0.5, no_ack=True, on_interval=None):
         key = self.get_key_for_task(task_id)
+        p = self.client.pubsub(ignore_subscribe_messages=True)
+        p.subscribe(key)
         meta = self.client.get(key)
+        if meta:
+            meta = self.decode(meta)
+            if meta['status'] not in states.READY_STATES:
+                meta = None
         if not meta:
-            p = self.client.pubsub(ignore_subscribe_messages=True)
-            p.subscribe(key)
             if timeout:
                 time_elapsed = 0.0
                 while True:
@@ -30,9 +34,9 @@ class RedisBackend(_RedisBackend):
                         raise TimeoutError('The operation timed out.')
             else:
                 message = next(p.listen())
-            p.unsubscribe()
-            p.close()
             assert message['type'] == 'message'
             assert message['channel'] == key
-            meta = message['data']
-        return self.decode(meta)
+            meta = self.decode(message['data'])
+        p.unsubscribe()
+        p.close()
+        return meta
